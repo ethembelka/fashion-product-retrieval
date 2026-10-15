@@ -1,0 +1,21 @@
+# Dondurulmuş omurga + MLP projeksiyon başlığı (tek eğitim)
+backbone: dinov2_vitb14       # Tablo 1'deki en iyi omurgayla değiştir
+use_cached_features: true     # omurga dondurulmuş → önceden çıkarılmış öznitelikler üzerinden eğit (çok hızlı)
+head:
+  hidden_dim: 1024
+  out_dim: 256
+  dropout: 0.1
+loss:
+  name: infonce
+  temperature: 0.05
+sampler:
+  P: 64        # batch başına ürün (match_key)
+  K: 2         # ürün başına görüntü (en az 1 user + 1 shop)
+optim:
+  name: adamw
+  lr: 1.0e-3
+  weight_decay: 1.0e-4
+  epochs: 30
+  patience: 5            # val_internal R@1'e göre
+seed: 0
+val_split: val_internal

@@ -1,0 +1,12 @@
+paths: configs/paths.yaml
+crop:
+  margin: 0.10          # kutu çevresine %10 pay
+  min_side_px: 32       # daha küçük kutular atılır (sayısı raporlanır)
+  resize_short: 256     # diske yazarken; model kendi ön işlemesini yapar
+  jpeg_quality: 92
+splits:
+  internal_val_ratio: 0.10   # train içinden, pair_id düzeyinde
+  seed: 0
+gallery:   {source: shop, style_min: 1}
+queries:   {source: user, style_min: 1, require_match: true}
+openset:   {source: user, style_eq: 0}

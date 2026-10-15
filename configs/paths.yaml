@@ -1,0 +1,5 @@
+# DeepFashion2'nin bilgisayardaki gerçek konumu. Veriyi taşımak istemezsen bu yolu değiştir.
+deepfashion2_root: data/raw/DeepFashion2
+processed_dir: data/processed
+features_dir: data/features
+outputs_dir: outputs

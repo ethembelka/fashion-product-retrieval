@@ -1,0 +1,13 @@
+split: test               # = DF2 validation; sadece rapor
+recall_k: [1, 5, 10, 20]
+search_k: 100
+openset:
+  scores: [abs, margin]    # abs = s1, margin = s1 - s2 (farklı match_key'li ilk iki sonuç)
+  tau_select_split: val_internal
+  tau_target_coverage: 0.95
+  report_coverages: [0.5, 0.8, 0.95]
+breakdown: [occlusion, scale, zoom_in, viewpoint, category]
+efficiency:
+  warmup: 20
+  iters: 200
+gallery_examples: 12       # başarı / başarısızlık galerisi için sorgu sayısı

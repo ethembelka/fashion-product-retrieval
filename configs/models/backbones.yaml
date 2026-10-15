@@ -1,0 +1,26 @@
+# Karşılaştırılan hazır omurgalar (eğitimsiz). registry.py bu isimleri kullanır.
+backbones:
+  resnet50:
+    library: timm
+    name: resnet50.a1_in1k
+    image_size: 224
+    batch_size: 128
+  clip_vitb16:
+    library: open_clip
+    name: ViT-B-16
+    pretrained: openai
+    image_size: 224
+    batch_size: 128
+  siglip_vitb16:
+    library: open_clip
+    name: ViT-B-16-SigLIP
+    pretrained: webli
+    image_size: 224
+    batch_size: 128
+  dinov2_vitb14:
+    library: timm
+    name: vit_base_patch14_dinov2.lvd142m
+    image_size: 224
+    batch_size: 96
+precision: fp16      # 6 GB VRAM için
+num_workers: 4

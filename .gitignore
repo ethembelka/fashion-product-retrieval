@@ -1,0 +1,15 @@
+# Veri ve büyük çıktılar git'e girmez (klasör yapısı .gitkeep ile korunur)
+data/*/*
+!data/*/.gitkeep
+outputs/*/*
+!outputs/*/.gitkeep
+*.pt
+*.pth
+*.onnx
+*.zip
+*.npy
+*.faiss
+.venv/
+__pycache__/
+.ipynb_checkpoints/
+!data/processed/splits/
