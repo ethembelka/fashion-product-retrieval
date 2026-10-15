@@ -9,8 +9,16 @@ ve katalogda karşılığı olmayan sorgular için **"katalogda yok" diyebilmek*
 DeepFashion2'deki `style = 0` ürünler doğal "katalog dışı" örnek olarak kullanılır; ek etiketleme gerekmez.
 
 ## Kısıtlar (önemli)
-- **Az eğitim.** Ana yol: hazır omurgalardan (DINOv2, CLIP, SigLIP) öznitelik çıkar → FAISS ile ara (eğitimsiz).
-  Tek eğitim: en iyi omurganın üstüne küçük bir **projeksiyon başlığı** (omurga dondurulmuş). Tam fine-tune isteğe bağlı.
+- **Eğitim sayısı sabit değil; zamana göre planlanır.** Önce eğitimsiz omurga karşılaştırması (Tablo 1) yapılır,
+  sonra eğitimler aşağıdaki öncelik sırasıyla, süresi ölçülerek eklenir.
+- Her yeni eğitimden önce: tahmini süreyi hesapla, `docs/EXPERIMENTS.md`'deki plana yaz, kullanıcıya sor.
+
+## Eğitim planı (öncelik sırası)
+1. Eğitimsiz: ResNet-50 / CLIP / SigLIP / DINOv2 karşılaştırması (eğitim yok, sadece öznitelik çıkarma)
+2. En iyi omurga + projeksiyon başlığı (omurga dondurulmuş, önbellekteki öznitelikler üzerinde — dakikalar)
+3. Kayıp karşılaştırması: InfoNCE vs ArcFace (yine önbellek üzerinde, ucuz)
+4. Kısmi fine-tune: omurganın son 2–4 bloğu açık (asıl ağır eğitim; yerel 6 GB'ta küçük batch + gradyan biriktirme, ya da Kaggle)
+5. Zaman kalırsa: ikinci bir omurgada aynı fine-tune
 - Donanım: RTX 3060 Laptop **6 GB VRAM**, 16 GB RAM. Ham veri (≈17 GB) yerelde; ağır iş bir kez yapılır (kırpma + öznitelik).
   Colab gerekirse sadece küçük `crops.zip` ya da `.npy` öznitelikleri Drive'a taşınır (notebooks/colab_train.ipynb).
 
@@ -41,6 +49,15 @@ DeepFashion2'deki `style = 0` ürünler doğal "katalog dışı" örnek olarak k
 - Metrik kodu değişirse `pytest -q` çalıştırılır. Recall@K ve mAP için elle hesaplanmış küçük örnek testleri var.
 - **Sızıntı yasak:** aynı `pair_id` hem eğitimde hem değerlendirmede olamaz. İç doğrulama ayrımı `pair_id` düzeyinde yapılır.
 - Veri, kırpıntılar, öznitelikler ve ağırlıklar git'e girmez (`.gitignore`).
+
+## Veri yerleşimi
+```
+data/raw/DeepFashion2/
+  train/image/*.jpg      train/annos/*.json
+  validation/image/*.jpg validation/annos/*.json
+```
+Zip açılınca bu düzen kurulmalı (zipin içinde fazladan bir üst klasör varsa onu atla). Veri başka bir yerdeyse
+sadece `configs/paths.yaml` içindeki `deepfashion2_root` değiştirilir.
 
 ## Veri
 DeepFashion2 (Ge vd., CVPR 2019): 13 kategori, ürün başına kutu, `style`, `scale`, `occlusion`, `zoom_in`, `viewpoint`;
