@@ -5,7 +5,7 @@ description: DeepFashion2 JSON etiketlerinden ürün kırpıntılarını, pair_i
 
 # Veri hazırlama
 
-1. `configs/paths.yaml` ve `configs/data.yaml` dosyalarını oku. `data/raw/DeepFashion2/{train,validation}/{image,annos}` var mı kontrol et; yoksa kullanıcıya hangi klasörün eksik olduğunu söyle ve dur.
+1. `configs/paths.yaml` ve `configs/data.yaml` dosyalarını oku. `<deepfashion2_root>/{train,validation}/{image,annos}` var mı kontrol et (test listeleri için `validation/json_for_validation/val_query.json` ve `val_gallery.json` da gerekli); yoksa kullanıcıya hangi klasörün eksik olduğunu söyle ve dur.
 2. `src/fashret/data/df2_parser.py`: her JSON'dan `item1, item2, ...` anahtarlarını oku; her ürün için bir satır üret:
    `item_id, split, image_path, source, pair_id, style, category_id, bbox, scale, occlusion, zoom_in, viewpoint`.
    Sonuç: `data/processed/items_{train,validation}.parquet`.
