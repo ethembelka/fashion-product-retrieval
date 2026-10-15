@@ -52,12 +52,15 @@ DeepFashion2'deki `style = 0` ürünler doğal "katalog dışı" örnek olarak k
 
 ## Veri yerleşimi
 ```
-data/raw/DeepFashion2/
-  train/image/*.jpg      train/annos/*.json
-  validation/image/*.jpg validation/annos/*.json
+data/raw/DeepFashion2/                      # Kaggle sürümü (kontrol edildi 15.10.2026)
+  deepfashion2_original_images/             # = configs/paths.yaml → deepfashion2_root
+    train/image (191.961)   train/annos (191.961 json)
+    validation/image (32.153)   validation/annos (32.153 json)
+    validation/json_for_validation/val_query.json (12.377 sorgu), val_gallery.json (36.961 galeri öğesi)
+    test/test/image (62.629, etiketsiz — kullanılmaz)
+  img_info_dataframes/*.csv                 # pair_id/source/style İÇERMEZ → kullanma; annos JSON'larını kullan
 ```
-Zip açılınca bu düzen kurulmalı (zipin içinde fazladan bir üst klasör varsa onu atla). Veri başka bir yerdeyse
-sadece `configs/paths.yaml` içindeki `deepfashion2_root` değiştirilir.
+Veri başka bir yerdeyse sadece `configs/paths.yaml` içindeki `deepfashion2_root` değiştirilir.
 
 ## Veri
 DeepFashion2 (Ge vd., CVPR 2019): 13 kategori, ürün başına kutu, `style`, `scale`, `occlusion`, `zoom_in`, `viewpoint`;

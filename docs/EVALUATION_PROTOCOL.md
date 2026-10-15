@@ -9,7 +9,13 @@
 
 Ayrım `pair_id` düzeyinde ve sabit tohumla (seed 0) yapılır; liste `data/processed/splits/` altında saklanır ve git'e girer (küçük CSV).
 
-## Galeri ve sorgular (her ayrımda aynı kural)
+## Resmi test listeleri
+Test (= DF2 validation) için **resmi** `val_query.json` (12.377 sorgu) ve `val_gallery.json` (36.961 galeri öğesi) kullanılır;
+böylece sonuçlar DeepFashion2 makalesiyle karşılaştırılabilir. Kayıt alanları: query → `query_image_id, pair_id, style, bbox, cls`;
+gallery → `gallery_image_id, pair_id, style, bbox`. Aşağıdaki kurallar resmi listelerle uyuşmazsa resmi liste geçerlidir; fark raporda belirtilir.
+Açık küme sorguları resmi listede yoktur; aşağıdaki kurala göre validation annos'tan üretilir.
+
+## Galeri ve sorgular (train_fit / val_internal için ve açık küme için kural)
 - **Galeri:** `source = shop` ve `style > 0` ürün kırpıntıları.
 - **Kapalı küme sorguları:** `source = user`, `style > 0` ve galeride aynı `match_key`'e sahip en az bir ürünü olanlar.
 - **Açık küme sorguları:** `source = user` ve `style = 0` (katalogda karşılığı tanımlı değil).
