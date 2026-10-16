@@ -1,6 +1,7 @@
 # Karar Günlüğü
 Yeni kararlar en üste, tarihli. Kaynak: (sohbet) = claude.ai sohbeti, (cc) = Claude Code, (hoca) = hocayla görüşme.
 
+- 2026-10-16 (sohbet): Öneri revize: metrikler sade dille açıklandı; araştırma ödevi (ILIAS/AMES) ile bağlantı cümlesi çıkarıldı — proje ve araştırma ödevi bağımsız, projenin katkısı sayılmaz.
 - 2026-10-16 (cc): Ortak kaynak GitHub private deposu (`origin/main`). Her oturum işe başlamadan önce `git pull`, işi bitirince commit + push yapar.
 - 2026-10-16 (hoca/sohbet): Hoca "aynısını değil benzerini, top-5 / top-3 gibi" bulacağını sordu. Karar: çıktı en benzer K mağaza görselinin sıralı listesi; başarı = aynı ürün (pair_id + style) ilk K'da mı (Recall@K). Ek metrik: ilk K'daki sonuçların sorguyla aynı kategoride olma oranı ("benzer alternatif kalitesi"). Katalogda yoksa: "aynısı yok" + yine top-K benzer öneri.
 - 2026-10-16 (sohbet): Proje önerisi yazıldı → `../Proposal/CMPE9103_Proposal_Ethem_Belka_Sahin.pdf` (teslim 18 Ekim).
