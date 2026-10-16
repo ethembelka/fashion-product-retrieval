@@ -29,6 +29,8 @@ DeepFashion2'deki `style = 0` ürünler doğal "katalog dışı" örnek olarak k
 4. Açık küme: mutlak eşik mi, top1–top2 farkı (margin) mı daha iyi "katalogda yok" kararı veriyor? (kapsama–kesinlik eğrisi, AUROC)
 
 ## Belgeler (kod yazmadan önce oku)
+- `docs/DECISIONS.md` → alınmış kararlar (**ilk bunu oku**)
+- `docs/STATUS.md` → güncel durum, sıradaki adımlar
 - `docs/ARCHITECTURE.md` → modüller, sorumluluklar, arayüzler, kod standartları
 - `docs/EVALUATION_PROTOCOL.md` → galeri/sorgu tanımı, eşleşme kuralı, metrikler, raporlama
 - `docs/EXPERIMENTS.md` → deney kaydı
@@ -71,3 +73,11 @@ Ham veri: `data/raw/DeepFashion2/` (train/, validation/ altında image/ ve annos
 ## Teslimler
 Öneri 18 Ekim 2026 · Teslim 13 Aralık 2026 (IEEE rapor, sunum, kod) · Sunum 16 Aralık 2026.
 Araştırma makaleleri: `../../03_Research_Paper/` (ILIAS, CVPR 2025 · AMES, ECCV 2024).
+
+## Senkronizasyon (claude.ai sohbeti ↔ Claude Code)
+Kullanıcı bu proje hakkında claude.ai'deki "Doktora Dersleri" sohbetinde de konuşuyor; o sohbet bu klasöre doğrudan yazabiliyor.
+Ortak hafıza bu depodaki dosyalardır:
+- `docs/DECISIONS.md` → alınmış kararlar (hoca görüşmeleri, kapsam değişiklikleri). **Oturum başında oku.** Yeni bir karar alınırsa en üste tarihli satır ekle.
+- `docs/STATUS.md` → güncel durum ve sıradaki adımlar. **Her çalışma oturumunun sonunda güncelle.**
+- `docs/EXPERIMENTS.md` → deney sonuçları.
+- Kurallar: işi bitirince commit at (yarım değişiklik bırakma); oturum başında `git log --oneline -5` ve `git status` ile başka yerden gelen değişikliklere bak.
