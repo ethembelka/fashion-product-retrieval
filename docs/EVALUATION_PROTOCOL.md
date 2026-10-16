@@ -32,6 +32,7 @@ L2-normalize gömmeler, FAISS `IndexFlatIP` (kosinüs). Tam arama; yaklaşık in
 | mAP | Sorgu başına average precision ortalaması (tüm doğru eşleşmeler üzerinden) | Sıralamanın tamamını ölçer |
 | Kapsama–kesinlik eğrisi | τ değiştikçe: kabul edilen sorgu oranı (kapsama) vs kabul edilenlerde top-1 doğruluğu | Açık küme |
 | AUROC (bilinen vs bilinmeyen) | Skorun kapalı küme ile açık küme sorgularını ayırma gücü | İki skor: mutlak s1, margin s1–s2 |
+| Benzer alternatif kalitesi | İlk K sonuçta sorguyla aynı kategoriden olan sonuçların oranı (kapalı ve açık küme ayrı) | "Aynısı yoksa benzerini öner" senaryosu |
 | Yanlış eşleşme oranı | Açık küme sorgularından τ üstünde kabul edilenlerin oranı | τ, val_internal'da %95 kapsama için seçilir |
 | Kırılımlar | Recall@1, occlusion / scale / zoom_in / viewpoint / kategori bazında | Sorgu (user) ürününün özelliklerine göre |
 | Verimlilik | Gömme boyutu, sorgu başına ms (GPU çıkarma + arama), indeks boyutu MB | |
