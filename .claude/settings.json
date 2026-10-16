@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/sync_check.sh\" 2>/dev/null || true",
+            "timeout": 15,
+            "statusMessage": "Checking for changes from other sessions..."
+          }
+        ]
+      }
+    ]
+  }
+}
