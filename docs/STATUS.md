@@ -24,9 +24,10 @@ _Son güncelleme: 2026-10-19 (cc)_
 - **Adım 2 tamam — Tablo 1 (test, eğitimsiz):** SigLIP R@1 0,357 / R@10 0,620 / mAP 0,320 → ResNet 0,088 → CLIP 0,079 → DINOv2 0,065. SigLIP, makaledeki eğitimli Match R-CNN'i (GT kutu top-1 0,268) eğitimsiz geçiyor. Öznitelikler Colab L4'te (~9 dk) çıkarıldı, Drive `features/` + yerel `data/features/`. CLIP QuickGELU düzeltmesiyle yerelde yeniden çıkarıldı. 8 çalıştırma `outputs/results/`, `docs/EXPERIMENTS.md`, `reports/tables/table1_*`. Rapor: `docs/reports/02_omurga_karsilastirmasi.docx`.
 - **Karar:** sonraki tüm adımlar `siglip_vitb16` üzerinde.
 
+- **Adım 3 tamam (yerel CPU):** `evaluation/open_set.py`, `breakdown.py`; `scripts/evaluate.py` artık val_internal'da τ seçip test'e uyguluyor; çıktılar `per_openset.parquet`, `coverage_curve_{abs,margin}.csv`, `breakdown.csv`. 13 test geçiyor. Bulgular (SigLIP test): AUROC bilinen↔yok s1 0,45 / margin 0,58 (yok diyemiyor); AUROC doğru↔yanlış margin 0,77; %50 kapsamada kesinlik 0,53; kırılım: ağır kapanma 0,20, küçük ölçek 0,20, yandan/arkadan 0,27, trousers 0,17. Rapor: `docs/reports/03_acik_kume_ve_kirilimlar.docx`.
+
 ## Sıradaki
-1. Adım 3: `evaluation/open_set.py` (abs vs margin, AUROC, kapsama–kesinlik, τ val_internal'da %95 kapsama), `breakdown.py` (occlusion/scale/zoom/viewpoint/kategori), `scripts/evaluate.py`'ye ekle; Rapor 3 — GPU gerekmez
-2. Adım 4: `engine/trainer.py` projeksiyon başlığı (InfoNCE, P×K) — train_fit öznitelikleri gerekli → Colab'da `siglip_vitb16 / train_fit` çıkarımı (≈207k görüntü, L4'te ~6 dk)
+1. Adım 4: `engine/trainer.py` projeksiyon başlığı (InfoNCE, P×K) — train_fit öznitelikleri gerekli → Colab'da `siglip_vitb16 / train_fit` çıkarımı (≈207k görüntü, L4'te ~6 dk)
 4. Adım 3 — açık küme + kırılımlar; Rapor 3
 
 ## Bekleyen

@@ -72,7 +72,8 @@ def grouped_hbar(groups: Sequence[str], series: dict[str, Sequence[float]], path
     ax.set_xlim(0, vmax * 1.15)
     centers = [g * 1.0 + (n - 1) * h / 2 for g in range(len(groups))][::-1]
     ax.set_yticks(centers, groups)
-    ax.legend(frameon=False, fontsize=9, loc="lower right")
+    # legend below the plot so it never covers a bar
+    ax.legend(frameon=False, fontsize=9, loc="upper center", bbox_to_anchor=(0.5, -0.08), ncol=min(n, 3))
     ax.set_title(title, loc="left", fontsize=11, color=INK, pad=10)
     _style(ax)
     return _save(fig, path)
@@ -100,6 +101,40 @@ def box_and_crops(image_path: str, boxes: Sequence[tuple[int, int, int, int, str
         axc.set_title(f"Kırpıntı {i + 1}", fontsize=9, color=INK2)
         axc.axis("off")
     fig.suptitle(title, x=0.01, ha="left", fontsize=11, color=INK)
+    return _save(fig, path)
+
+
+def hist_overlay(groups: dict[str, Sequence[float]], path: Path, title: str, xlabel: str, bins: int = 60) -> Path:
+    """Overlapping step histograms (density) for 2–4 groups; fixed hue order; legend present."""
+    fig, ax = plt.subplots(figsize=(7, 3.2))
+    lo = min(min(v) for v in groups.values()); hi = max(max(v) for v in groups.values())
+    edges = np.linspace(lo, hi, bins + 1)
+    for i, (name, vals) in enumerate(groups.items()):
+        ax.hist(vals, bins=edges, density=True, histtype="stepfilled", alpha=0.25, color=SERIES[i], edgecolor=SERIES[i], linewidth=1.5, label=f"{name} (n={len(vals):,})".replace(",", "."))
+    ax.legend(frameon=False, fontsize=9)
+    ax.set_title(title, loc="left", fontsize=11, color=INK, pad=10)
+    ax.set_xlabel(xlabel, color=INK2, fontsize=9)
+    ax.set_yticks([])
+    _style(ax)
+    ax.grid(False)
+    return _save(fig, path)
+
+
+def lines(series: dict[str, tuple[Sequence[float], Sequence[float]]], path: Path, title: str, xlabel: str, ylabel: str,
+          xlim: tuple[float, float] | None = None, ylim: tuple[float, float] | None = None, marker_at: dict[str, tuple[float, float]] | None = None) -> Path:
+    """2px lines, one hue per series, optional marker (e.g. the chosen τ operating point)."""
+    fig, ax = plt.subplots(figsize=(6.4, 3.6))
+    for i, (name, (x, y)) in enumerate(series.items()):
+        ax.plot(x, y, color=SERIES[i], linewidth=2, label=name)
+        if marker_at and name in marker_at:
+            mx, my = marker_at[name]
+            ax.plot([mx], [my], "o", color=SERIES[i], markersize=8, markeredgecolor=SURFACE, markeredgewidth=2)
+    ax.legend(frameon=False, fontsize=9)
+    ax.set_title(title, loc="left", fontsize=11, color=INK, pad=10)
+    ax.set_xlabel(xlabel, color=INK2, fontsize=9); ax.set_ylabel(ylabel, color=INK2, fontsize=9)
+    if xlim: ax.set_xlim(*xlim)
+    if ylim: ax.set_ylim(*ylim)
+    _style(ax); ax.grid(axis="y", color=GRID, linewidth=0.8)
     return _save(fig, path)
 
 

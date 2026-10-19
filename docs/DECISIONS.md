@@ -1,6 +1,7 @@
 # Karar Günlüğü
 Yeni kararlar en üste, tarihli. Kaynak: (sohbet) = claude.ai sohbeti, (cc) = Claude Code, (hoca) = hocayla görüşme.
 
+- 2026-10-19 (cc): Açık küme bulgusu: eğitimsiz skorlarla bilinen↔katalogda-yok ayrımı yazı-tura düzeyinde (SigLIP AUROC s1 0,45 / margin 0,58; style=0 sorgular için de s1 ≈ 0,83). Margin ise "top-1 doğru mu" sorusunda işe yarıyor (AUROC 0,77, s1 0,58) → ek metrik `auroc_correct_{abs,margin}` eklendi (seçici tahmin). Adım 4'teki başlık eğitiminin ikinci hedefi açık küme AUROC'unu yükseltmek.
 - 2026-10-19 (cc): Ön işleme: her omurga kendi resmi eval dönüşümünü kullanır. Ortak "squash 224×224" denendi (256-way probe): ResNet R@1 0,094→0,059, CLIP/DINOv2 fark yok → reddedildi. DINOv2 için 448 px, patch-ortalama havuzlama, letterbox da denendi; hepsi R@1 < 0,10 → DINOv2'nin zayıflığı gerçek bulgu (alan farkı), hata değil. CLIP: `ViT-B-16` → `ViT-B-16-quickgelu` (OpenAI ağırlıkları QuickGELU; uyumsuzluk R@5'i 0,18→0,22 düşürüyordu), CLIP öznitelikleri yerelde yeniden çıkarıldı.
 - 2026-10-19 (cc): Çalışma düzeni: ağır GPU işleri (öznitelik çıkarma, eğitim) Colab'da (Google AI Pro, Drive 5 TB); kırpma yerelde bir kez yapılıp `crops.zip` Drive'a yüklenir; ham zip Drive'a yüklenmez (Kaggle yedek). Drive yerleşimi: `MyDrive/CMPE9103_Retrieval/{data,features,outputs}`.
 - 2026-10-19 (cc): Her adım sonunda `docs/reports/NN_*.docx` Word raporu (sayılar çıktı dosyalarından betikle okunur, elle yazılmaz).
