@@ -18,9 +18,13 @@ _Son güncelleme: 2026-10-19 (cc)_
 - **Adım 2 kodu hazır:** `src/fashret/models/` (FeatureExtractor, timm, open_clip, registry), `data/dataset.py`, `engine/extractor.py`, `scripts/extract_features.py`; 4 omurga 256 kırpıntıyla yerelde doğrulandı (3060, fp16: ~110–130 img/s, <1 GB VRAM). Colab defteri: `notebooks/colab_extract_features.ipynb` (crops.zip + GitHub token → features/ Drive'a)
 - `data/crops.zip` üretildi: 7,72 GB, 364.592 dosya (crops + splits + crop_report), bütünlük testi temiz
 
+- **Değerlendirme kodu hazır (kapalı küme):** `index/faiss_index.py`, `evaluation/closed_set.py` (Recall@K, mAP, kategori tutarlılığı, s1/s2), `evaluation/evaluator.py`, `scripts/evaluate.py`; 4 elle hesaplanmış metrik testi (toplam 9 test geçiyor). Uçtan uca 3.000 örnekle yerelde denendi.
+- GitHub deposu **public** yapıldı (Colab token'sız çekiyor)
+
 ## Sıradaki
-1. Kullanıcı: `crops.zip`'i Drive `CMPE9103_Retrieval/data/` altına yükle; Colab Secrets'a `GITHUB_TOKEN` ekle; defteri çalıştır (4 model × 2 ayrım)
-2. Adım 2 — `evaluate-retrieval` (yerel CPU): `index/faiss_index.py`, `evaluation/closed_set.py`, `scripts/evaluate.py`, Recall@K/mAP testleri → Tablo 1; Rapor 2
+1. Kullanıcı: `crops.zip` Drive'a yükleniyor → sonra `notebooks/colab_extract_features.ipynb` (L4, 4 model × 2 ayrım)
+2. Öznitelikler Drive'dan yerel `data/features/` altına indirilince: 4 model × test → `scripts/evaluate.py` → Tablo 1; `scripts/make_tables.py`; Rapor 2
+3. Adım 3: `evaluation/open_set.py` (AUROC, kapsama–kesinlik, τ seçimi), `breakdown.py`, galeriler; Rapor 3
 4. Adım 3 — açık küme + kırılımlar; Rapor 3
 
 ## Bekleyen
