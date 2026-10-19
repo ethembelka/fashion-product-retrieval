@@ -30,5 +30,5 @@ def build_extractor(name: str, cfg: dict[str, Any], device: torch.device | None 
     if lib == "open_clip":
         from .openclip_backbone import OpenClipExtractor
 
-        return OpenClipExtractor(name, spec["name"], spec["pretrained"], device, fp16)
+        return OpenClipExtractor(name, spec["name"], spec["pretrained"], spec["image_size"], device, fp16)
     raise ValueError(f"Unknown library {lib!r} for backbone {name!r}")

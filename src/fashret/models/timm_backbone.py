@@ -26,6 +26,8 @@ class TimmExtractor:
         if self.fp16:
             self.model = self.model.half()
         cfg = timm.data.resolve_data_config({"input_size": (3, image_size, image_size)}, model=self.model)
+        # Each backbone keeps its official eval preprocessing (resize + center crop). A uniform
+        # "squash to S×S" was tried and hurt ResNet (-3.5 R@1 on a 256-way probe) — see DECISIONS.md.
         self._tf = timm.data.create_transform(**cfg, is_training=False)
         self.embed_dim = int(self.model.num_features)
 

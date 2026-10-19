@@ -15,7 +15,7 @@ from .base import l2_normalize
 
 
 class OpenClipExtractor:
-    def __init__(self, name: str, arch: str, pretrained: str, device: torch.device, fp16: bool) -> None:
+    def __init__(self, name: str, arch: str, pretrained: str, image_size: int, device: torch.device, fp16: bool) -> None:
         self.name = name
         self.device = device
         self.fp16 = fp16 and device.type == "cuda"
@@ -23,7 +23,7 @@ class OpenClipExtractor:
         self.model = model.eval().to(device)
         if self.fp16:
             self.model = self.model.half()
-        self._tf = preprocess
+        self._tf = preprocess  # official eval transform of the pretrained tag (see timm_backbone.py note)
         with torch.inference_mode():
             d = self.model.encode_image(torch.zeros(1, 3, 224, 224, device=device, dtype=torch.float16 if self.fp16 else torch.float32))
         self.embed_dim = int(d.shape[-1])

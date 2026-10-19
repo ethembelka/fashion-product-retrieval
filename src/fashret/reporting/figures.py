@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Sequence
 
 import matplotlib
+import numpy as np
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
@@ -56,17 +57,19 @@ def hbar(labels: Sequence[str], values: Sequence[float], path: Path, title: str,
     return _save(fig, path)
 
 
-def grouped_hbar(groups: Sequence[str], series: dict[str, Sequence[float]], path: Path, title: str) -> Path:
+def grouped_hbar(groups: Sequence[str], series: dict[str, Sequence[float]], path: Path, title: str,
+                 fmt: str = "{:,.0f}") -> Path:
     """Few series x few groups; fixed hue order; legend always present."""
     n = len(series)
     fig, ax = plt.subplots(figsize=(7, 0.9 * len(groups) + 1.4))
     h = 0.8 / n
+    vmax = max(max(s) for s in series.values())
     for i, (name, vals) in enumerate(series.items()):
         ys = [g * 1.0 + (n - 1 - i) * h for g in range(len(groups))][::-1]
         ax.barh(ys, vals, height=h * 0.9, color=SERIES[i], label=name)
         for yy, v in zip(ys, vals):
-            ax.text(v + max(max(s) for s in series.values()) * 0.01, yy, f"{v:,.0f}".replace(",", "."),
-                    va="center", fontsize=8, color=INK2)
+            ax.text(v + vmax * 0.01, yy, fmt.format(v).replace(",", "."), va="center", fontsize=8, color=INK2)
+    ax.set_xlim(0, vmax * 1.15)
     centers = [g * 1.0 + (n - 1) * h / 2 for g in range(len(groups))][::-1]
     ax.set_yticks(centers, groups)
     ax.legend(frameon=False, fontsize=9, loc="lower right")
@@ -97,6 +100,39 @@ def box_and_crops(image_path: str, boxes: Sequence[tuple[int, int, int, int, str
         axc.set_title(f"Kırpıntı {i + 1}", fontsize=9, color=INK2)
         axc.axis("off")
     fig.suptitle(title, x=0.01, ha="left", fontsize=11, color=INK)
+    return _save(fig, path)
+
+
+def retrieval_grid(rows: Sequence[tuple[Path, Sequence[tuple[Path, bool, float]]]], path: Path, title: str) -> Path:
+    """Each row: query crop, then its top-k gallery crops; correct ones get a green frame, score under each."""
+    k = max(len(r[1]) for r in rows)
+    fig, axes = plt.subplots(len(rows), k + 1, figsize=(1.55 * (k + 1), 1.9 * len(rows)))
+    axes = np.atleast_2d(axes)
+    for ri, (qp, results) in enumerate(rows):
+        ax = axes[ri, 0]
+        with Image.open(qp) as im:
+            ax.imshow(im)
+        ax.set_title("sorgu" if ri == 0 else "", fontsize=8, color=INK2)
+        for s in ax.spines.values():
+            s.set_edgecolor(SERIES[0]); s.set_linewidth(2)
+        ax.set_xticks([]); ax.set_yticks([])
+        for ci in range(k):
+            ax = axes[ri, ci + 1]
+            if ci < len(results):
+                gp, ok, score = results[ci]
+                with Image.open(gp) as im:
+                    ax.imshow(im)
+                col = "#0ca30c" if ok else GRID
+                for s in ax.spines.values():
+                    s.set_edgecolor(col); s.set_linewidth(3 if ok else 1)
+                ax.set_xlabel(f"{score:.2f}", fontsize=7, color=INK2)
+                if ri == 0:
+                    ax.set_title(f"top-{ci + 1}", fontsize=8, color=INK2)
+                ax.set_xticks([]); ax.set_yticks([])
+            else:
+                ax.axis("off")
+    fig.suptitle(title, x=0.01, ha="left", fontsize=11, color=INK)
+    fig.tight_layout()
     return _save(fig, path)
 
 

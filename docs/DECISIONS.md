@@ -1,6 +1,7 @@
 # Karar Günlüğü
 Yeni kararlar en üste, tarihli. Kaynak: (sohbet) = claude.ai sohbeti, (cc) = Claude Code, (hoca) = hocayla görüşme.
 
+- 2026-10-19 (cc): Ön işleme: her omurga kendi resmi eval dönüşümünü kullanır. Ortak "squash 224×224" denendi (256-way probe): ResNet R@1 0,094→0,059, CLIP/DINOv2 fark yok → reddedildi. DINOv2 için 448 px, patch-ortalama havuzlama, letterbox da denendi; hepsi R@1 < 0,10 → DINOv2'nin zayıflığı gerçek bulgu (alan farkı), hata değil. CLIP: `ViT-B-16` → `ViT-B-16-quickgelu` (OpenAI ağırlıkları QuickGELU; uyumsuzluk R@5'i 0,18→0,22 düşürüyordu), CLIP öznitelikleri yerelde yeniden çıkarıldı.
 - 2026-10-19 (cc): Çalışma düzeni: ağır GPU işleri (öznitelik çıkarma, eğitim) Colab'da (Google AI Pro, Drive 5 TB); kırpma yerelde bir kez yapılıp `crops.zip` Drive'a yüklenir; ham zip Drive'a yüklenmez (Kaggle yedek). Drive yerleşimi: `MyDrive/CMPE9103_Retrieval/{data,features,outputs}`.
 - 2026-10-19 (cc): Her adım sonunda `docs/reports/NN_*.docx` Word raporu (sayılar çıktı dosyalarından betikle okunur, elle yazılmaz).
 - 2026-10-19 (cc): Liste CSV'lerinde `crop_path` processed dizinine göreli (Colab uyumu). Git'e yalnızca test listeleri + pair_id ayrımları girer; train_fit/val_internal listeleri seed 0 ile yeniden üretilir ve crops.zip içinde taşınır.

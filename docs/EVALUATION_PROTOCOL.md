@@ -37,10 +37,17 @@ L2-normalize gömmeler, FAISS `IndexFlatIP` (kosinüs). Tam arama; yaklaşık in
 | Kırılımlar | Recall@1, occlusion / scale / zoom_in / viewpoint / kategori bazında | Sorgu (user) ürününün özelliklerine göre |
 | Verimlilik | Gömme boyutu, sorgu başına ms (GPU çıkarma + arama), indeks boyutu MB | |
 
-## Referans
-DeepFashion2 makalesi (Ge vd., CVPR 2019) consumer-to-shop için Match R-CNN'in top-1…top-20 doğruluklarını verir.
-**Sayıları rapora koymadan önce makalenin retrieval tablosundan doğrula** ve buraya yaz. Bu sayılar kendi kurulumumuzla
-bire bir aynı değildir (kırpıntı kuralı, filtreler); raporda farkı açıkça yaz.
+## Referans (makale PDF'inden doğrulandı, 19.10.2026)
+DeepFashion2 makalesi (Ge vd., CVPR 2019), Tablo 5 — Match R-CNN consumer-to-shop, "overall" sütunları, en iyi satır (pose+class):
+
+| Kutu | top-1 | top-10 | top-20 |
+|---|---|---|---|
+| gerçek (GT) | 0.268 | 0.574 | 0.665 |
+| tespit edilen | 0.244 | 0.522 | 0.617 |
+
+Top-5 yalnızca Şekil 6(d) grafiğinde verilir, sayı yok. Makale sorgu kümesini "galeride 5'ten fazla eşi olan ürünler" olarak
+tanımlar; biz resmi `val_query.json`'u olduğu gibi kullanıyoruz (12.375/12.377) ve GT kutularla çalışıyoruz → en yakın
+karşılaştırma GT satırıdır. Fark raporda açıkça yazılır.
 
 ## Rapor biçimi
 - Tablo 1: omurga karşılaştırması (eğitimsiz) — R@1/5/10/20, mAP, embed_dim, ms/sorgu.

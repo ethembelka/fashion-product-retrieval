@@ -1,4 +1,6 @@
 # Karşılaştırılan hazır omurgalar (eğitimsiz). registry.py bu isimleri kullanır.
+# Ön işleme: her model kendi resmi değerlendirme dönüşümünü kullanır (timm / open_clip pretrained config).
+# Ortak "squash" geometrisi denendi, kazanç yok (DECISIONS.md 2026-10-19).
 backbones:
   resnet50:
     library: timm
@@ -7,7 +9,7 @@ backbones:
     batch_size: 128
   clip_vitb16:
     library: open_clip
-    name: ViT-B-16
+    name: ViT-B-16-quickgelu   # openai ağırlıkları QuickGELU ile eğitildi; düz ViT-B-16 uyumsuzluk uyarısı veriyordu
     pretrained: openai
     image_size: 224
     batch_size: 128
