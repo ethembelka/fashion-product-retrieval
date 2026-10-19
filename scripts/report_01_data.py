@@ -14,8 +14,12 @@ sys.path.insert(0, str(ROOT / "src"))
 
 import pandas as pd  # noqa: E402
 
+from fashret.reporting import figures as fig  # noqa: E402
 from fashret.reporting.docx_report import Report  # noqa: E402
-from fashret.utils.io import read_json  # noqa: E402
+from fashret.utils.io import read_json, read_table  # noqa: E402
+
+FIG_DIR = ROOT / "reports/figures/01_data"
+PROCESSED = ROOT / "data/processed"
 
 CATEGORY_NAMES = {
     1: "short sleeve top", 2: "long sleeve top", 3: "short sleeve outwear", 4: "long sleeve outwear",
@@ -28,8 +32,37 @@ def n(df: pd.DataFrame, split: str, lst: str, col: str = "n_items") -> int:
     return int(df[(df.split == split) & (df["list"] == lst)][col].iloc[0])
 
 
+def make_example_figures(items: pd.DataFrame) -> tuple[Path, Path]:
+    """(a) one validation photo with its boxes and crops; (b) user vs shop photos of the same product."""
+    ok = items[items["cropped"]]
+    # (a) a photo with exactly two garments, both reasonably large
+    counts = ok.groupby("image_id").size()
+    two = ok[ok["image_id"].isin(counts[counts == 2].index)]
+    two = two[(two.x2 - two.x1) > 150]
+    img_id = two["image_id"].iloc[0]
+    rows = ok[ok["image_id"] == img_id]
+    boxes = [(r.x1, r.y1, r.x2, r.y2, CATEGORY_NAMES.get(r.category_id, "")) for r in rows.itertuples()]
+    fa = fig.box_and_crops(rows["image_path"].iloc[0], boxes, list(rows["crop_path"]),
+                           FIG_DIR / "example_crop.png", "Bir fotoğraftan kırpıntılara")
+    # (b) same match_key, one user + one shop crop, large boxes
+    big = ok[(ok.x2 - ok.x1) > 120]
+    pair = None
+    for mk, g in big[big["style"] > 0].groupby("match_key"):
+        if {"user", "shop"} <= set(g["source"]):
+            pair = g
+            break
+    u = pair[pair["source"] == "user"].iloc[0]
+    s = pair[pair["source"] == "shop"].iloc[0]
+    fb = fig.box_and_crops(u["image_path"], [(u.x1, u.y1, u.x2, u.y2, "müşteri (user)")],
+                           [u["crop_path"], s["crop_path"]], FIG_DIR / "example_pair.png",
+                           f"Aynı ürün: müşteri fotoğrafı (sol) ve mağaza fotoğrafı (sağ) — pair_id {u.pair_id}, style {u.style}")
+    return fa, fb
+
+
 def main() -> None:
     crop = read_json(ROOT / "data/processed/crop_report.json")
+    items_val = read_table(PROCESSED / "items_validation_cropped.parquet")
+    fig_example, fig_pair = make_example_figures(items_val)
     summ = pd.read_csv(ROOT / "reports/tables/data_summary.csv")
     cats = pd.read_csv(ROOT / "reports/tables/data_categories.csv", index_col=0)
     crops_gb = sum(p.stat().st_size for p in (ROOT / "data/processed/crops").rglob("*.jpg")) / 1e9
@@ -63,6 +96,8 @@ def main() -> None:
         "Stil numarası (style): aynı ürün grubunda farklı renk/desen varyantlarını ayırır. style = 0 ise o kıyafetin katalogda tanımlı bir karşılığı yoktur.",
         "Çekim koşulları: kapanma (occlusion), ölçek (scale), yakınlaştırma (zoom_in), bakış açısı (viewpoint).",
     ])
+    r.figure(fig_pair, "Şekil 1. Projenin çözdüğü problem: soldaki müşteri fotoğrafından, sağdaki mağaza fotoğrafını bulmak. "
+             "İki fotoğraf aynı ürünü gösterir ama ışık, poz ve çekim açısı farklıdır.", width_in=5.5)
     r.table(
         ["Bölüm", "Fotoğraf", "Etiket (JSON)", "Kullanım"],
         [
@@ -87,6 +122,11 @@ def main() -> None:
     ])
 
     r.h1("4. Ne yaptık?")
+    flow = fig.flow_diagram(
+        ["Ham fotoğraf\n+ JSON etiket", "Ürün tablosu\n(parquet)", "Kırpıntılar\n(JPEG)", "pair_id\nayrımı", "Galeri / sorgu /\naçık küme listeleri"],
+        FIG_DIR / "pipeline.png", "Veri hazırlama akışı",
+    )
+    r.figure(flow, "Şekil 2. Ham veriden değerlendirme listelerine giden beş adım.", width_in=6.3)
     r.h2("4.1 Etiketleri tabloya çevirdik")
     r.para(
         "224.114 JSON dosyası tek tek okundu ve her kıyafet için bir satır içeren iki tablo üretildi "
@@ -98,6 +138,8 @@ def main() -> None:
         "Model, fotoğrafın tamamına değil yalnızca kıyafete bakmalı. Bu yüzden her kutu, çevresine %10 pay eklenerek "
         "kesildi ve kısa kenarı 256 piksel olacak şekilde küçültüldü. Sonuç, her ürün için küçük bir JPEG dosyasıdır."
     )
+    r.figure(fig_example, "Şekil 3. Solda etiketlerdeki kutular (renkli dikdörtgenler), sağda bu kutulardan üretilen kırpıntılar. "
+             "Model yalnızca sağdaki görüntüleri görür.", width_in=6.0)
     r.table(
         ["Bölüm", "Toplam ürün", "Kesilen", "Çok küçük (atıldı)", "Hata"],
         [[s, crop[s]["total"], crop[s]["cropped"], crop[s]["dropped_too_small"], crop[s]["errors"]] for s in ("train", "validation")],
@@ -130,6 +172,17 @@ def main() -> None:
         for lst in ("gallery", "queries", "openset"):
             rows.append([split, lst, n(summ, split, lst), n(summ, split, lst, "n_products")])
     r.table(["Ayrım", "Liste", "Görüntü sayısı", "Farklı ürün sayısı"], rows, caption="Tablo 3. Üretilen listeler")
+    splits_fig = fig.grouped_hbar(
+        ["train_fit", "val_internal", "test"],
+        {
+            "Galeri (mağaza)": [n(summ, s, "gallery") for s in ("train_fit", "val_internal", "test")],
+            "Sorgu (müşteri)": [n(summ, s, "queries") for s in ("train_fit", "val_internal", "test")],
+            "Katalogda yok": [n(summ, s, "openset") for s in ("train_fit", "val_internal", "test")],
+        },
+        FIG_DIR / "splits.png", "Ayrım başına liste büyüklükleri (görüntü sayısı)",
+    )
+    r.figure(splits_fig, "Şekil 4. Üç ayrımın büyüklükleri. train_fit yalnızca eğitimde, val_internal yalnızca seçimde, "
+             "test yalnızca raporlamada kullanılır.", width_in=6.0)
     miss = crop.get("test_official_missing", {})
     r.para(
         f"Resmi test listelerinden eşleştirilemeyen kayıt: sorgu {miss.get('queries', 0)}, galeri {miss.get('gallery', 0)}. "
@@ -140,6 +193,11 @@ def main() -> None:
     r.para("Test sorgularının kategorilere dağılımı aşağıdadır. Bazı kategoriler çok az örnek içerir; kırılım analizinde bu gruplar işaretlenecektir.")
     col = "test/queries"
     cat_rows = [[cid, CATEGORY_NAMES.get(cid, "?"), int(cats.loc[cid, col])] for cid in cats.index if col in cats]
+    cat_rows.sort(key=lambda x: -x[2])
+    cat_fig = fig.hbar([f"{c[1]} ({c[0]})" for c in cat_rows], [c[2] for c in cat_rows],
+                       FIG_DIR / "test_query_categories.png", "Test sorgularının kategori dağılımı", "sorgu sayısı")
+    r.figure(cat_fig, "Şekil 5. 13 kategorinin test sorgularındaki payı. Üstler ve etekler çoğunlukta; "
+             "'short sleeve outwear' ve 'sling' gibi kategoriler çok az örnek içerir.", width_in=5.8)
     r.table(["Kategori no", "Kategori", "Test sorgusu"], cat_rows, caption="Tablo 4. Test sorgularının kategori dağılımı")
 
     r.h1("6. Ortaya çıkan dosyalar")

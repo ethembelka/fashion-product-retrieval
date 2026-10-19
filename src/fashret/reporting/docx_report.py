@@ -13,7 +13,7 @@ from typing import Sequence
 from docx import Document
 from docx.enum.table import WD_TABLE_ALIGNMENT
 from docx.enum.text import WD_ALIGN_PARAGRAPH
-from docx.shared import Pt, RGBColor
+from docx.shared import Inches, Pt, RGBColor
 
 HEADER_FILL = "D9E2F3"
 
@@ -82,6 +82,16 @@ class Report:
             for i, v in enumerate(row):
                 cells[i].text = _fmt(v)
         self.doc.add_paragraph()
+
+    def figure(self, path: str | Path, caption: str, width_in: float = 6.0) -> None:
+        self.doc.add_picture(str(path), width=Inches(width_in))
+        self.doc.paragraphs[-1].alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p = self.doc.add_paragraph()
+        p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        r = p.add_run(caption)
+        r.italic = True
+        r.font.size = Pt(9)
+        r.font.color.rgb = RGBColor(0x52, 0x51, 0x4E)
 
     def save(self, path: str | Path) -> Path:
         path = Path(path)
