@@ -1,6 +1,9 @@
 # Karar Günlüğü
 Yeni kararlar en üste, tarihli. Kaynak: (sohbet) = claude.ai sohbeti, (cc) = Claude Code, (hoca) = hocayla görüşme.
 
+- 2026-10-19 (cc): Çalışma düzeni: ağır GPU işleri (öznitelik çıkarma, eğitim) Colab'da (Google AI Pro, Drive 5 TB); kırpma yerelde bir kez yapılıp `crops.zip` Drive'a yüklenir; ham zip Drive'a yüklenmez (Kaggle yedek). Drive yerleşimi: `MyDrive/CMPE9103_Retrieval/{data,features,outputs}`.
+- 2026-10-19 (cc): Her adım sonunda `docs/reports/NN_*.docx` Word raporu (sayılar çıktı dosyalarından betikle okunur, elle yazılmaz).
+- 2026-10-19 (cc): Liste CSV'lerinde `crop_path` processed dizinine göreli (Colab uyumu). Git'e yalnızca test listeleri + pair_id ayrımları girer; train_fit/val_internal listeleri seed 0 ile yeniden üretilir ve crops.zip içinde taşınır.
 - 2026-10-16 (sohbet): Öneri revize: metrikler sade dille açıklandı; araştırma ödevi (ILIAS/AMES) ile bağlantı cümlesi çıkarıldı — proje ve araştırma ödevi bağımsız, projenin katkısı sayılmaz.
 - 2026-10-16 (cc): Ortak kaynak GitHub private deposu (`origin/main`). Her oturum işe başlamadan önce `git pull`, işi bitirince commit + push yapar.
 - 2026-10-16 (hoca/sohbet): Hoca "aynısını değil benzerini, top-5 / top-3 gibi" bulacağını sordu. Karar: çıktı en benzer K mağaza görselinin sıralı listesi; başarı = aynı ürün (pair_id + style) ilk K'da mı (Recall@K). Ek metrik: ilk K'daki sonuçların sorguyla aynı kategoride olma oranı ("benzer alternatif kalitesi"). Katalogda yoksa: "aynısı yok" + yine top-K benzer öneri.

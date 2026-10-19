@@ -13,3 +13,7 @@ outputs/*/*
 __pycache__/
 .ipynb_checkpoints/
 !data/processed/splits/
+
+# Büyük ayrım listeleri (koddan seed 0 ile yeniden üretilir; crops.zip içinde de var)
+data/processed/splits/train_fit/
+data/processed/splits/val_internal/

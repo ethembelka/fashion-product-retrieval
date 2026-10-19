@@ -1,0 +1,10 @@
+split,list,n_items,n_products,n_pair_ids
+train_fit,gallery,133709,26342,13099
+train_fit,queries,60894,16374,12844
+train_fit,openset,12724,4889,4889
+val_internal,gallery,14533,2936,1456
+val_internal,queries,6236,1791,1424
+val_internal,openset,1339,507,507
+test,queries,12375,3031,2278
+test,gallery,36958,6455,2279
+test,openset,3137,1023,1023
