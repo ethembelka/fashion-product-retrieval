@@ -15,14 +15,16 @@ _Son güncelleme: 2026-10-19 (cc)_
   - Rapor: `docs/reports/01_veri_hazirlama.docx` (üretici: `scripts/report_01_data.py`)
   - `data/crops.zip` (`scripts/pack_crops.py`) → kullanıcı Drive'a `CMPE9103_Retrieval/data/` altına yükleyecek
 
+- **Adım 2 kodu hazır:** `src/fashret/models/` (FeatureExtractor, timm, open_clip, registry), `data/dataset.py`, `engine/extractor.py`, `scripts/extract_features.py`; 4 omurga 256 kırpıntıyla yerelde doğrulandı (3060, fp16: ~110–130 img/s, <1 GB VRAM). Colab defteri: `notebooks/colab_extract_features.ipynb` (crops.zip + GitHub token → features/ Drive'a)
+- `data/crops.zip` üretildi: 7,72 GB, 364.592 dosya (crops + splits + crop_report), bütünlük testi temiz
+
 ## Sıradaki
-1. Kullanıcı: `crops.zip`'i Drive'a yükle
-2. Adım 2 — `extract-features`: Colab defteri + `src/fashret/models/` + `engine/extractor.py`; 4 omurga, val_internal + test → `.npy` Drive'a
-3. Adım 2 — `evaluate-retrieval` (yerel CPU): Recall@K, mAP → Tablo 1; Rapor 2
+1. Kullanıcı: `crops.zip`'i Drive `CMPE9103_Retrieval/data/` altına yükle; Colab Secrets'a `GITHUB_TOKEN` ekle; defteri çalıştır (4 model × 2 ayrım)
+2. Adım 2 — `evaluate-retrieval` (yerel CPU): `index/faiss_index.py`, `evaluation/closed_set.py`, `scripts/evaluate.py`, Recall@K/mAP testleri → Tablo 1; Rapor 2
 4. Adım 3 — açık küme + kırılımlar; Rapor 3
 
 ## Bekleyen
 - Protokol metni: "kısa kenar 224" → config `resize_short: 256` (disk 256, model 224'e indirir) — protokol metnini düzelt
 - val_internal galerisine shop style=0 dikkat dağıtıcıları eklensin mi (resmi test galerisi içeriyor) — karar bekliyor
-- `head.yaml`'da ArcFace/`unfreeze_blocks` alanları yok; Colab defteri güncellenecek (Adım 2'de)
+- `head.yaml`'da ArcFace/`unfreeze_blocks` alanları yok (Adım 4'te eklenecek); eski `colab_train.ipynb` kaldırıldı, eğitim defteri Adım 4'te yazılacak
 - Araştırma önerisi (ILIAS + AMES, 1 sayfa) — teslim 1 Kasım
