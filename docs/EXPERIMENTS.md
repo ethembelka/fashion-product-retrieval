@@ -3,7 +3,10 @@
 ## Plan (süre tahminleri, CLAUDE.md kuralı)
 - 2026-10-21 Adım 4 — projeksiyon başlığı (siglip_vitb16, InfoNCE, önbellek öznitelikleri): train_fit 194.603 satır (60.894 user + 133.709 shop), 16.374 ürün;
   val_internal üzerinde 3 turluk deneme 0,5 s/tur (20k satır) → tam veri ≈ 5 s/tur, 30 tur + erken durdurma ≈ 3 dk, yerel 3060, VRAM < 1 GB. Colab gerekmez.
-- Adım 4b — ArcFace karşılaştırması: aynı veri, aynı süre (≈ 3 dk).
+- Adım 4b — ArcFace karşılaştırması: aynı veri, aynı süre (≈ 3 dk). [yapıldı]
+- 2026-10-22 Adım 5 — kısmi fine-tune (SigLIP son 4 blok + attn_pool + başlık, 35,4 M parametre; InfoNCE, P=64 K=2, AMP, 8 tur, lr 1e-5/1e-3):
+  tur başına 32.748 görüntü ileri+geri (son 4 blok) + val_internal 20.769 görüntü ileri. L4 tahmini ≈ 2,5–4 dk/tur → 8 tur 20–35 dk; zip açma 5 dk; test+val çıkarımı 3 dk → toplam ≈ 40 dk.
+  Colab L4, tam otomatik (notebooks/colab_finetune.ipynb, sonunda runtime.unassign). Yerel smoke test (64 ürün, 2 tur) geçti. Kullanıcı onayı: 2026-10-22.
 
 Her deney bitince `log-experiment` skill'i ile bir satır eklenir. Sayılar `outputs/results/<run_id>/metrics.json` dosyasından alınır, elle yazılmaz.
 

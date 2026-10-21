@@ -20,3 +20,7 @@ data/processed/splits/val_internal/
 
 # Word geçici dosyaları
 ~$*.docx
+
+# Kucuk paylasilan baslangic agirliklari (Colab fine-tune bunu kullanir)
+!checkpoints/
+!checkpoints/*.pt

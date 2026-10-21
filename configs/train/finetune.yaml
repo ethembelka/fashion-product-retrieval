@@ -1,0 +1,28 @@
+# Kısmi fine-tune: SigLIP görüntü kulesinin son blokları + projeksiyon başlığı, görüntülerden (crops) eğitilir.
+backbone: siglip_vitb16
+unfreeze_blocks: 4            # son N transformer bloğu + attn_pool + son norm açık; patch_embed ve ilk 8 blok dondurulmuş
+head:
+  hidden_dim: 1024
+  out_dim: 256
+  dropout: 0.1
+  init_from: checkpoints/siglip_vitb16_head_infonce.pt   # Adım 4'ün InfoNCE başlığıyla başla (git'te, 4 MB)
+loss:
+  name: infonce
+  temperature: 0.05
+sampler:
+  P: 64        # ürün / batch
+  K: 2         # 1 user + 1 shop  → 128 görüntü / adım
+optim:
+  lr_backbone: 1.0e-5
+  lr_head: 1.0e-3
+  weight_decay: 0.05
+  epochs: 8
+  patience: 3
+  warmup_steps: 100
+augment:
+  random_resized_crop_scale: [0.7, 1.0]
+  hflip: true
+amp: true                      # fp16 autocast + GradScaler
+num_workers: 6
+seed: 0
+val_split: val_internal
