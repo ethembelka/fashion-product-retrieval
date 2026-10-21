@@ -86,7 +86,9 @@ def fig_categories(items: pd.DataFrame) -> Path:
 
 def fig_crop_arith(items: pd.DataFrame, cfg: DataCfg) -> tuple[Path, dict]:
     """The worked example used in the text: one box, its margin, the clipped box, the resize."""
-    r = items[items.item_id == "validation_000001_item2"].iloc[0]
+    # pick a user garment whose box is larger than the target short side, so the resize step is visible
+    big = items[(items.source == "user") & ((items.x2 - items.x1) > 320) & ((items.y2 - items.y1) > 400)]
+    r = big.iloc[7]
     with Image.open(r.image_path) as im:
         W, H = im.size
     box = expand_box(r.x1, r.y1, r.x2, r.y2, cfg.crop.margin, W, H)
@@ -96,7 +98,7 @@ def fig_crop_arith(items: pd.DataFrame, cfg: DataCfg) -> tuple[Path, dict]:
     out = (round(cw * s), round(ch * s)) if min(cw, ch) > cfg.crop.resize_short else (cw, ch)
     with Image.open(PROCESSED / r.crop_path) as c:
         real = c.size
-    facts = dict(W=W, H=H, x1=r.x1, y1=r.y1, x2=r.x2, y2=r.y2, bw=bw, bh=bh, dx=round(bw * cfg.crop.margin), dy=round(bh * cfg.crop.margin),
+    facts = dict(item=r.item_id, image=Path(r.image_path).name, W=W, H=H, x1=r.x1, y1=r.y1, x2=r.x2, y2=r.y2, bw=bw, bh=bh, dx=round(bw * cfg.crop.margin), dy=round(bh * cfg.crop.margin),
                  box=box, cw=cw, ch=ch, out=out, real=real, margin=cfg.crop.margin, short=cfg.crop.resize_short)
     p = fig.box_and_crops(r.image_path, [(r.x1, r.y1, r.x2, r.y2, "etiket kutusu"), (box[0], box[1], box[2], box[3], "+%10 pay")],
                           [r.crop_path and PROCESSED / r.crop_path], FIG_DIR / "crop_arith.png", "Kırpma: etiket kutusu, payla büyütülmüş kutu ve sonuç")
@@ -267,7 +269,7 @@ def main() -> None:
     )
     r.para(
         "Bir dijital fotoğraf, yükseklik × genişlik × 3 boyutlu bir sayı matrisidir: her pikselin kırmızı, yeşil, mavi değeri (0–255). "
-        f"Örnek fotoğraf 000001.jpg {A['W']}×{A['H']} piksel. Kırpma, bu matristen bir dikdörtgen alt-matris almaktır. Adımlar, yukarıdaki item2 (kutu [{A['x1']}, {A['y1']}, {A['x2']}, {A['y2']}]) üzerinde:"
+        f"Örnek fotoğraf {A['image']} {A['W']}×{A['H']} piksel. Kırpma, bu matristen bir dikdörtgen alt-matris almaktır. Adımlar, {A['item']} kıyafeti (kutu [{A['x1']}, {A['y1']}, {A['x2']}, {A['y2']}]) üzerinde:"
     )
     r.numbered([
         f"Kutuyu büyüt: kutu genişliği {A['bw']}, yüksekliği {A['bh']} piksel. Her kenara kendi boyunun %{int(A['margin']*100)}'u kadar pay eklendi: "
@@ -277,7 +279,7 @@ def main() -> None:
         f"Küçült: kısa kenar {A['short']} piksel olacak şekilde yeniden örnekle (bicubic enterpolasyon: her yeni pikselin değeri, eski görüntüde "
         f"karşılık gelen konumun çevresindeki 4×4 pikselin ağırlıklı ortalaması). Örnekte {A['cw']}×{A['ch']} → {A['real'][0]}×{A['real'][1]}. "
         "Neden: modellerin hepsi 224 piksellik giriş kullanıyor; daha büyük saklamak disk ve zaman israfı. Kısa kenar zaten 256'dan küçükse büyütülmez (bilgi uydurmanın anlamı yok).",
-        f"JPEG olarak kaydet (kalite {cfg.crop.jpeg_quality}): data/processed/crops/validation/validation_000001_item2.jpg.",
+        f"JPEG olarak kaydet (kalite {cfg.crop.jpeg_quality}): data/processed/crops/validation/{A['item']}.jpg.",
     ])
     r.figure(f_crop, "Şekil 6. Aynı örnek: mavi = etiketteki kutu, turuncu = %10 payla büyütülmüş kutu, sağda ortaya çıkan kırpıntı.", width_in=5.5)
     r.para("Dikkat edilenler:", "")
@@ -285,7 +287,7 @@ def main() -> None:
         f"Kenarı {cfg.crop.min_side_px} pikselden küçük kutular atlandı (train {crop['train']['dropped_too_small']}, validation {crop['validation']['dropped_too_small']} adet). "
         "Bu kadar küçük bir yamada kıyafet ayırt edilemez; sayı o kadar küçük ki sonuçları etkilemez ama raporlanır.",
         "Zaten kesilmiş bir kıyafet yeniden kesilmez; iş yarıda kesilirse kaldığı yerden sürer. Toplam 1 saat sürdü (8 çekirdek).",
-        f"Bozuk/okunamayan fotoğraf: 0. Toplam {crop['train']['cropped'] + crop['validation']['cropped']:,} kırpıntı, {crops_gb:.1f} GB (ham veri 15 GB).".replace(",", "."),
+        f"Bozuk/okunamayan fotoğraf: 0. Toplam {crop['train']['cropped'] + crop['validation']['cropped']:,} kırpıntı, {crops_gb:.1f} GB (ham veri 15 GB).".replace(",", ".").replace(" GB", " GB").replace(f"{crops_gb:.1f}", f"{crops_gb:.1f}".replace(".", ",")),
     ])
     r.table(["Bölüm", "Toplam kıyafet", "Kesilen", "Çok küçük (atlandı)", "Hata"],
             [[s, crop[s]["total"], crop[s]["cropped"], crop[s]["dropped_too_small"], crop[s]["errors"]] for s in ("train", "validation")],
