@@ -1,5 +1,5 @@
 # Durum
-_Son güncelleme: 2026-10-19 (cc)_
+_Son güncelleme: 2026-10-21 (cc)_
 
 ## Hazır
 - Depo yapısı, mimari, değerlendirme protokolü, skill'ler
@@ -32,10 +32,10 @@ _Son güncelleme: 2026-10-19 (cc)_
 ## Sıradaki
 0. Kullanıcı: Colab'da `siglip_vitb16 / train_fit` çıkarımı → `data/features/siglip_vitb16/train_fit/` (bekleniyor)
 1. Adım 4: `engine/trainer.py` projeksiyon başlığı (InfoNCE, P×K) — train_fit öznitelikleri gerekli → Colab'da `siglip_vitb16 / train_fit` çıkarımı (≈207k görüntü, L4'te ~6 dk)
-4. Adım 3 — açık küme + kırılımlar; Rapor 3
+2. Adım 4 sonrası: `scripts/evaluate.py --variant head` (val_internal → test), Tablo 2 (zeroshot vs head), Rapor 4; sonra ArcFace karşılaştırması (Adım 4b)
 
 ## Bekleyen
 - Protokol metni: "kısa kenar 224" → config `resize_short: 256` (disk 256, model 224'e indirir) — protokol metnini düzelt
 - val_internal galerisine shop style=0 dikkat dağıtıcıları eklensin mi (resmi test galerisi içeriyor) — karar bekliyor
-- `head.yaml`'da ArcFace/`unfreeze_blocks` alanları yok (Adım 4'te eklenecek); eski `colab_train.ipynb` kaldırıldı, eğitim defteri Adım 4'te yazılacak
+- Kısmi fine-tune (plan madde 4) için `unfreeze_blocks` henüz yok; başlık sonuçlarına göre karar verilecek
 - Araştırma önerisi (ILIAS + AMES, 1 sayfa) — teslim 1 Kasım
