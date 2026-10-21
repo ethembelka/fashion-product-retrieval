@@ -61,12 +61,13 @@ def train_head(train_dir: Path, val_dir: Path, cfg: dict, out_dir: Path, device:
 
     hc, lc, oc, sc = cfg["head"], cfg["loss"], cfg["optim"], cfg["sampler"]
     head = ProjectionHead(emb.shape[1], hc["hidden_dim"], hc["out_dim"], hc["dropout"]).to(device)
-    params = list(head.parameters())
+    groups = [{"params": list(head.parameters()), "lr": oc["lr"]}]
     arc_w = None
     if lc["name"] == "arcface":
+        # one class-centre row per product; each row sees ~2 samples per epoch, so it needs its own (higher) lr
         arc_w = nn.Parameter(torch.randn(len(key_ids), hc["out_dim"], device=device) * 0.01)
-        params.append(arc_w)
-    opt = torch.optim.AdamW(params, lr=oc["lr"], weight_decay=oc["weight_decay"])
+        groups.append({"params": [arc_w], "lr": lc.get("class_lr", oc["lr"]), "weight_decay": 0.0})
+    opt = torch.optim.AdamW(groups, lr=oc["lr"], weight_decay=oc["weight_decay"])
     sampler = PKSampler(keys, is_user, sc["P"], sc["K"], seed=cfg["seed"])
 
     history, best, bad, start_epoch = [], -1.0, 0, 0

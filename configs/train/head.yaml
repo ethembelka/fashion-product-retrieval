@@ -9,7 +9,8 @@ loss:
   name: infonce                # infonce | arcface
   temperature: 0.05
   scale: 30.0                  # arcface
-  margin: 0.3                  # arcface (radyan)
+  margin: 0.2                  # arcface (radyan)
+  class_lr: 1.0e-2             # arcface sınıf merkezleri (16k ürün, her biri epoch başına ~2 örnek görür)
 sampler:
   P: 64        # batch başına ürün (match_key)
   K: 2         # ürün başına görüntü (1 user + 1 shop)

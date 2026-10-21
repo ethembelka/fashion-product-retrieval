@@ -26,6 +26,11 @@ def main() -> None:
                 to_latex(t, "Training-free backbone comparison on the DeepFashion2 test split (official val lists).", "tab:backbones"),
                 encoding="utf-8")
         print(f"\n[{split}]\n", t.to_string(index=False))
+    # Table 2: best backbone, zeroshot vs learned heads (test)
+    t2 = df[(df.split == "test") & (df.model.str.startswith("siglip_vitb16"))].sort_values("variant")
+    cols = ["model", "variant", "embed_dim"] + [c for c in t2.columns if c.startswith("recall@") or c in ("map", "category_consistency@5", "auroc_abs", "auroc_margin")]
+    t2[cols].to_csv(out / "table2_head_test.csv", index=False)
+    print("\n[table2 test]\n", t2[cols].to_string(index=False))
 
 
 if __name__ == "__main__":

@@ -1,5 +1,5 @@
 # Durum
-_Son güncelleme: 2026-10-21 (cc)_
+_Son güncelleme: 2026-10-22 (cc)_
 
 ## Hazır
 - Depo yapısı, mimari, değerlendirme protokolü, skill'ler
@@ -29,10 +29,11 @@ _Son güncelleme: 2026-10-21 (cc)_
 - **Adım 4 kodu hazır:** `models/projection_head.py`, `data/samplers.py` (P×K), `engine/losses.py` (InfoNCE user→shop, ArcFace), `engine/trainer.py` (val_internal R@1 ile seçim, best/last.pt, resume), `scripts/train_head.py` (başlığı val_internal+test özniteliklerine uygular → `data/features/siglip_vitb16+head/`). 16 test geçiyor. Windows'ta torch→pyarrow.dataset DLL çökmesi: `fashret` paketi pyarrow'u önce yükler, betikler `import fashret` ile başlar.
 - Raporlar 1–3 öğretici biçimde baştan yazıldı (2026-10-21).
 
+- **Adım 4 tamam (yerel 3060, ≈3 dk/eğitim):** train_fit SigLIP öznitelikleri Colab'da çıkarıldı (194.603 satır, 16.374 ürün). InfoNCE başlığı (768→1024→256): val R@1 0,422→0,656; **test R@1 0,357→0,559, mAP 0,320→0,542, AUROC var↔yok (s1) 0,45→0,68**, %50 kapsamada kesinlik 0,80. ArcFace (class_lr 1e-2, m 0,2): val 0,640, test R@1 0,567 / mAP 0,529 / AUROC 0,70 — başa baş; seçim val'e göre → InfoNCE ana yöntem. İlk ArcFace denemesi (class_lr = lr) 0,08'de çöktü. Öznitelikler `data/features/siglip_vitb16+{head,arcface}/`, checkpoint'ler `outputs/checkpoints/`. Rapor: `docs/reports/04_projeksiyon_basligi.docx`.
+
 ## Sıradaki
-0. Kullanıcı: Colab'da `siglip_vitb16 / train_fit` çıkarımı → `data/features/siglip_vitb16/train_fit/` (bekleniyor)
-1. Adım 4: `engine/trainer.py` projeksiyon başlığı (InfoNCE, P×K) — train_fit öznitelikleri gerekli → Colab'da `siglip_vitb16 / train_fit` çıkarımı (≈207k görüntü, L4'te ~6 dk)
-2. Adım 4 sonrası: `scripts/evaluate.py --variant head` (val_internal → test), Tablo 2 (zeroshot vs head), Rapor 4; sonra ArcFace karşılaştırması (Adım 4b)
+1. Plan madde 4 — kısmi fine-tune (SigLIP son 2–4 blok, Colab L4, görüntülerden; tahmin ≈1 saat) — süre tahmini + onay gerekiyor; önce başlık için kısa lr/epoch taraması (ucuz) düşünülebilir
+2. Nihai rapor hazırlığı: tohum tekrarı (3 tohum, başlık), Tablo 1–2 LaTeX, IEEE taslak; sunum
 
 ## Bekleyen
 - Protokol metni: "kısa kenar 224" → config `resize_short: 256` (disk 256, model 224'e indirir) — protokol metnini düzelt

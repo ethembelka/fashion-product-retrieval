@@ -1,0 +1,24 @@
+# Dondurulmuş omurga + MLP projeksiyon başlığı; önbellekteki öznitelikler üzerinde eğitilir.
+backbone: siglip_vitb16        # Tablo 1'in en iyisi
+use_cached_features: true      # omurgadan geçiş yok; data/features/<backbone>/train_fit/*.npy okunur
+head:
+  hidden_dim: 1024
+  out_dim: 256
+  dropout: 0.1
+loss:
+  name: arcface
+  temperature: 0.05
+  scale: 30.0                  # arcface
+  margin: 0.2                  # arcface (radyan)
+  class_lr: 1.0e-2             # arcface sınıf merkezleri (16k ürün, her biri epoch başına ~2 örnek görür)
+sampler:
+  P: 64        # batch başına ürün (match_key)
+  K: 2         # ürün başına görüntü (1 user + 1 shop)
+optim:
+  name: adamw
+  lr: 1.0e-3
+  weight_decay: 1.0e-4
+  epochs: 30
+  patience: 8            # val_internal R@1'e göre erken durdurma
+seed: 0
+val_split: val_internal
