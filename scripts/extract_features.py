@@ -12,6 +12,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 
+import fashret  # noqa: E402,F401  (must precede torch: see fashret/__init__.py)
 import torch  # noqa: E402
 
 from fashret.config import PathsCfg  # noqa: E402

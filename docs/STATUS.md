@@ -26,7 +26,11 @@ _Son güncelleme: 2026-10-19 (cc)_
 
 - **Adım 3 tamam (yerel CPU):** `evaluation/open_set.py`, `breakdown.py`; `scripts/evaluate.py` artık val_internal'da τ seçip test'e uyguluyor; çıktılar `per_openset.parquet`, `coverage_curve_{abs,margin}.csv`, `breakdown.csv`. 13 test geçiyor. Bulgular (SigLIP test): AUROC bilinen↔yok s1 0,45 / margin 0,58 (yok diyemiyor); AUROC doğru↔yanlış margin 0,77; %50 kapsamada kesinlik 0,53; kırılım: ağır kapanma 0,20, küçük ölçek 0,20, yandan/arkadan 0,27, trousers 0,17. Rapor: `docs/reports/03_acik_kume_ve_kirilimlar.docx`.
 
+- **Adım 4 kodu hazır:** `models/projection_head.py`, `data/samplers.py` (P×K), `engine/losses.py` (InfoNCE user→shop, ArcFace), `engine/trainer.py` (val_internal R@1 ile seçim, best/last.pt, resume), `scripts/train_head.py` (başlığı val_internal+test özniteliklerine uygular → `data/features/siglip_vitb16+head/`). 16 test geçiyor. Windows'ta torch→pyarrow.dataset DLL çökmesi: `fashret` paketi pyarrow'u önce yükler, betikler `import fashret` ile başlar.
+- Raporlar 1–3 öğretici biçimde baştan yazıldı (2026-10-21).
+
 ## Sıradaki
+0. Kullanıcı: Colab'da `siglip_vitb16 / train_fit` çıkarımı → `data/features/siglip_vitb16/train_fit/` (bekleniyor)
 1. Adım 4: `engine/trainer.py` projeksiyon başlığı (InfoNCE, P×K) — train_fit öznitelikleri gerekli → Colab'da `siglip_vitb16 / train_fit` çıkarımı (≈207k görüntü, L4'te ~6 dk)
 4. Adım 3 — açık küme + kırılımlar; Rapor 3
 

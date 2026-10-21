@@ -1,5 +1,10 @@
 # Deney Kaydı
 
+## Plan (süre tahminleri, CLAUDE.md kuralı)
+- 2026-10-21 Adım 4 — projeksiyon başlığı (siglip_vitb16, InfoNCE, önbellek öznitelikleri): train_fit 194.603 satır (60.894 user + 133.709 shop), 16.374 ürün;
+  val_internal üzerinde 3 turluk deneme 0,5 s/tur (20k satır) → tam veri ≈ 5 s/tur, 30 tur + erken durdurma ≈ 3 dk, yerel 3060, VRAM < 1 GB. Colab gerekmez.
+- Adım 4b — ArcFace karşılaştırması: aynı veri, aynı süre (≈ 3 dk).
+
 Her deney bitince `log-experiment` skill'i ile bir satır eklenir. Sayılar `outputs/results/<run_id>/metrics.json` dosyasından alınır, elle yazılmaz.
 
 | run_id | tarih | omurga | varyant | ayrım | ortam | R@1 | R@10 | mAP | AUROC (margin) | not |
