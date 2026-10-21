@@ -90,7 +90,9 @@ def box_and_crops(image_path: str, boxes: Sequence[tuple[int, int, int, int, str
         ax.imshow(im)
     for i, (x1, y1, x2, y2, lab) in enumerate(boxes):
         ax.add_patch(Rectangle((x1, y1), x2 - x1, y2 - y1, fill=False, lw=2, edgecolor=SERIES[i % len(SERIES)]))
-        ax.text(x1 + 4, y1 + 4, lab, fontsize=7.5, color="white", weight="bold", va="top",
+        # alternate label corners so nested boxes don't overprint each other
+        ty, va = (y1 + 4, "top") if i % 2 == 0 else (y2 - 4, "bottom")
+        ax.text(x1 + 4, ty, lab, fontsize=7.5, color="white", weight="bold", va=va,
                 bbox=dict(facecolor=SERIES[i % len(SERIES)], edgecolor="none", pad=1.5))
     ax.set_title("Orijinal fotoğraf + kutular", fontsize=9, color=INK2)
     ax.axis("off")
@@ -166,6 +168,49 @@ def retrieval_grid(rows: Sequence[tuple[Path, Sequence[tuple[Path, bool, float]]
                 ax.set_xticks([]); ax.set_yticks([])
             else:
                 ax.axis("off")
+    fig.suptitle(title, x=0.01, ha="left", fontsize=11, color=INK)
+    fig.tight_layout()
+    return _save(fig, path)
+
+
+def image_grid(rows: Sequence[Sequence[tuple[Path, str]]], path: Path, title: str, row_labels: Sequence[str] | None = None,
+               cell: float = 1.5, frame: Sequence[Sequence[str | None]] | None = None) -> Path:
+    """Generic grid of (image, caption) cells; optional row labels on the left and per-cell frame colours."""
+    nr, nc = len(rows), max(len(r) for r in rows)
+    fig, axes = plt.subplots(nr, nc, figsize=(cell * nc + (1.2 if row_labels else 0), cell * 1.25 * nr))
+    axes = np.atleast_2d(axes)
+    for ri, row in enumerate(rows):
+        for ci in range(nc):
+            ax = axes[ri, ci]
+            if ci < len(row):
+                p, cap = row[ci]
+                with Image.open(p) as im:
+                    ax.imshow(im)
+                ax.set_title(cap, fontsize=7.5, color=INK2)
+                col = frame[ri][ci] if frame and frame[ri][ci] else GRID
+                for s in ax.spines.values():
+                    s.set_edgecolor(col); s.set_linewidth(2.5 if col != GRID else 1)
+                ax.set_xticks([]); ax.set_yticks([])
+            else:
+                ax.axis("off")
+        if row_labels:
+            axes[ri, 0].set_ylabel(row_labels[ri], fontsize=8.5, color=INK, rotation=0, ha="right", va="center", labelpad=8)
+    fig.suptitle(title, x=0.01, ha="left", fontsize=11, color=INK)
+    fig.tight_layout()
+    return _save(fig, path)
+
+
+def patch_grid(image_path: str | Path, patch: int, size: int, path: Path, title: str) -> Path:
+    """Show how a ViT cuts the (resized) image into patch×patch squares."""
+    with Image.open(image_path) as im:
+        im = im.convert("RGB").resize((size, size), Image.BICUBIC)
+    fig, (a, b) = plt.subplots(1, 2, figsize=(5.2, 2.8))
+    a.imshow(im); a.set_title(f"{size}×{size} piksel", fontsize=9, color=INK2); a.axis("off")
+    b.imshow(im)
+    for k in range(0, size + 1, patch):
+        b.axhline(k - 0.5, color="white", linewidth=0.6); b.axvline(k - 0.5, color="white", linewidth=0.6)
+    n = size // patch
+    b.set_title(f"{n}×{n} = {n * n} parça ({patch}×{patch} piksel)", fontsize=9, color=INK2); b.axis("off")
     fig.suptitle(title, x=0.01, ha="left", fontsize=11, color=INK)
     fig.tight_layout()
     return _save(fig, path)

@@ -54,6 +54,17 @@ def evaluate_split(feat_dir: Path, recall_k: list[int], search_k: int, consisten
     scores, idx, q_s1, q_s2 = search_scores(index, q_emb, g_keys, search_k)
     search_ms = (time.time() - t0) * 1000 / len(q_emb)
     _, o_idx, o_s1, o_s2 = search_scores(index, o_emb, g_keys, search_k)
+    # "strict" open-set variant: the official test gallery contains style=0 shop items, so an open-set
+    # query may find its own pair_id's shop twin. Mask gallery items with the same pair_id and re-score.
+    o_sims = o_emb @ g_emb.T
+    o_sims[o_meta["pair_id"].to_numpy()[:, None] == g_meta["pair_id"].to_numpy()[None, :]] = -np.inf
+    o_strict_idx = np.argsort(-o_sims, axis=1)[:, :search_k]
+    o_strict_scores = np.take_along_axis(o_sims, o_strict_idx, axis=1)
+    sk = g_keys[o_strict_idx]
+    diff = sk != sk[:, :1]
+    o_s1_strict = o_strict_scores[:, 0]
+    o_s2_strict = o_strict_scores[np.arange(len(sk)), np.where(diff.any(axis=1), diff.argmax(axis=1), search_k - 1)]
+    same_pair_top1 = float((g_meta["pair_id"].to_numpy()[o_idx[:, 0]] == o_meta["pair_id"].to_numpy()).mean())
 
     # ---- closed set
     ranked_keys = g_keys[idx]
@@ -74,6 +85,7 @@ def evaluate_split(feat_dir: Path, recall_k: list[int], search_k: int, consisten
     per_open = o_meta.copy()
     per_open["s1"], per_open["s2"] = o_s1, o_s2
     per_open["top1_key"] = g_keys[o_idx[:, 0]]
+    per_open["s1_strict"], per_open["s2_strict"] = o_s1_strict, o_s2_strict
 
     # ---- open set
     known, unknown = rejection_scores(q_s1, q_s2), rejection_scores(o_s1, o_s2)
@@ -92,6 +104,10 @@ def evaluate_split(feat_dir: Path, recall_k: list[int], search_k: int, consisten
         t = tau[name] if tau else tau_for_coverage(known[name], tau_target_coverage)
         chosen_tau[name] = t
         openset[f"at_tau_{name}"] = apply_tau(known[name], correct, unknown[name], t)
+    unknown_strict = rejection_scores(o_s1_strict, o_s2_strict)
+    for name in ("abs", "margin"):
+        openset[f"auroc_{name}_strict"] = auroc_known_vs_unknown(known[name], unknown_strict[name])
+    openset["openset_top1_same_pair_id"] = same_pair_top1
     openset["tau_source"] = "given" if tau else "this_split"
     openset["tau"] = chosen_tau
     metrics["openset"] = openset

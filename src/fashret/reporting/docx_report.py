@@ -58,6 +58,25 @@ class Report:
         for it in items:
             self.doc.add_paragraph(it, style="List Number")
 
+    def h3(self, text: str) -> None:
+        self.doc.add_heading(text, level=3)
+
+    def mono(self, text: str) -> None:
+        """Monospace block for JSON / code / table-row excerpts (no markdown processing)."""
+        for line in text.rstrip("\n").splitlines():
+            p = self.doc.add_paragraph()
+            p.paragraph_format.space_after = Pt(0)
+            r = p.add_run(line if line else " ")
+            r.font.name = "Consolas"
+            r.font.size = Pt(8.5)
+        self.doc.add_paragraph()
+
+    def definition(self, term: str, text: str) -> None:
+        """'Term — explanation' paragraph; used for every technical term the first time it appears."""
+        p = self.doc.add_paragraph()
+        p.add_run(term).bold = True
+        p.add_run(" — " + text)
+
     def note(self, text: str) -> None:
         """Grey, italic side note for 'why does this matter' explanations."""
         p = self.doc.add_paragraph()
