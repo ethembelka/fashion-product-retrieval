@@ -24,3 +24,5 @@ Her deney bitince `log-experiment` skill'i ile bir satır eklenir. Sayılar `out
 | 20261022_siglip_vitb16+head_head_test_s0 | 2026-10-22 | siglip_vitb16 | head | test | yerel 3060 | 0.559 | 0.808 | 0.542 | 0.641 | AUROC abs 0.676; doğru↔yanlış margin 0.813; kat.tut@5 0.814; dim 256 |
 | 20261022_siglip_vitb16+arcface_arcface_val_internal_s0 | 2026-10-22 | siglip_vitb16 | arcface | val_internal | yerel 3060 | 0.640 | 0.855 | 0.608 | 0.707 | AUROC abs 0.811; doğru↔yanlış margin 0.830; kat.tut@5 0.775; dim 256 |
 | 20261022_siglip_vitb16+arcface_arcface_test_s0 | 2026-10-22 | siglip_vitb16 | arcface | test | yerel 3060 | 0.567 | 0.804 | 0.529 | 0.666 | AUROC abs 0.700; doğru↔yanlış margin 0.822; kat.tut@5 0.788; dim 256 |
+| 20261023_siglip_vitb16+ft_ft_val_internal_s0 | 2026-10-23 | siglip_vitb16 | ft (son 4 blok) | val_internal | Colab L4 | 0.745 | 0.915 | 0.734 | 0.737 | AUROC abs 0.805; kat.tut@5 0.843; dim 256 |
+| 20261023_siglip_vitb16+ft_ft_test_s0 | 2026-10-23 | siglip_vitb16 | ft (son 4 blok) | test | Colab L4 | 0.633 | 0.855 | 0.628 | 0.678 | AUROC abs 0.714; kat.tut@5 0.845; dim 256 |

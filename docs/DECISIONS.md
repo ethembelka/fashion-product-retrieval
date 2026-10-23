@@ -1,6 +1,7 @@
 # Karar Günlüğü
 Yeni kararlar en üste, tarihli. Kaynak: (sohbet) = claude.ai sohbeti, (cc) = Claude Code, (hoca) = hocayla görüşme.
 
+- 2026-10-23 (cc): Adım 5 kısmi fine-tune (SigLIP son 4 blok + attn_pool + başlık, Adım 4 başlığından başlatma, lr 1e-5/1e-3, RandomResizedCrop+flip, AMP, 8 tur) Colab L4'te tam otomatik çalıştı; test R@1 0,559→0,633. Nihai yöntem: SigLIP + kısmi fine-tune; başlık-yalnız sürümü ucuz alternatif olarak raporda kalır.
 - 2026-10-22 (cc): Adım 4: InfoNCE (user→shop, çok-pozitif, T=0,05, P=64 K=2, 30 tur) ana yöntem; ArcFace sınıf merkezleri için ayrı `class_lr` (1e-2) şart, aksi hâlde çökmüyor ama öğrenmiyor (val 0,08). Yöntem seçimi val_internal R@1 ile: InfoNCE 0,656 > ArcFace 0,640; test'te başa baş. Eğitim yerelde (3 dk), Colab gerekmedi.
 - 2026-10-22 (cc): Windows'ta `torch` (CUDA) yüklendikten sonra `pyarrow.dataset` import'u çöküyor → `fashret/__init__.py` pyarrow'u önce yükler; betikler `import fashret` ile başlar.
 - 2026-10-19 (cc): Açık küme bulgusu: eğitimsiz skorlarla bilinen↔katalogda-yok ayrımı yazı-tura düzeyinde (SigLIP AUROC s1 0,45 / margin 0,58; style=0 sorgular için de s1 ≈ 0,83). Margin ise "top-1 doğru mu" sorusunda işe yarıyor (AUROC 0,77, s1 0,58) → ek metrik `auroc_correct_{abs,margin}` eklendi (seçici tahmin). Adım 4'teki başlık eğitiminin ikinci hedefi açık küme AUROC'unu yükseltmek.

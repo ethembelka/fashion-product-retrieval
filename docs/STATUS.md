@@ -1,5 +1,5 @@
 # Durum
-_Son güncelleme: 2026-10-22 (cc)_
+_Son güncelleme: 2026-10-23 (cc)_
 
 ## Hazır
 - Depo yapısı, mimari, değerlendirme protokolü, skill'ler
@@ -33,9 +33,11 @@ _Son güncelleme: 2026-10-22 (cc)_
 
 - **Adım 5 kodu hazır (kısmi fine-tune):** `engine/finetune.py` (FineTuneModel: son 4 blok + attn_pool + başlık; RandomResizedCrop+flip; AMP; warmup+cosine; Drive'a best/last.pt + resume; sonunda val/test öznitelik çıkarımı), `scripts/finetune.py` (--smoke), `configs/train/finetune.yaml`, `checkpoints/siglip_vitb16_head_infonce.pt` (başlangıç, git'te), `notebooks/colab_finetune.ipynb` (Tümünü çalıştır → bitince runtime.unassign). Yerel smoke geçti.
 
+- **Adım 5 tamam (Colab L4, tam otomatik):** son 4 blok + başlık fine-tune. val R@1 0,745; **test R@1 0,633 / mAP 0,628 / R@20 0,898 / AUROC abs 0,714 / kat.tut@5 0,845** (başlık: 0,559 / 0,542 / 0,862 / 0,676). Öznitelikler `data/features/siglip_vitb16+ft/`. Rapor: `docs/reports/05_kismi_fine_tune.docx`. `history.json` henüz indirilmedi (eğitim eğrisi raporda eksik).
+
 ## Sıradaki
-1. Kullanıcı: `colab_finetune.ipynb` → L4 → Tümünü çalıştır (≈40 dk, kendiliğinden kapanır) → Drive `features/siglip_vitb16+ft/` ve `outputs/checkpoints/ft/history.json` indir
-2. Yerel: `evaluate.py --variant ft` (val_internal, test), Tablo 2'ye satır, Rapor 5
+1. Kullanıcı: Drive `outputs/checkpoints/ft/history.json` + `train_summary.json` → `outputs/checkpoints/ft/` (Rapor 5'e eğitim eğrisi)
+2. Tohum tekrarı (başlık 3 tohum, ucuz); IEEE rapor taslağı (LaTeX, Tablo 1–2, şekiller); sunum
 2. Nihai rapor hazırlığı: tohum tekrarı (3 tohum, başlık), Tablo 1–2 LaTeX, IEEE taslak; sunum
 
 ## Bekleyen
