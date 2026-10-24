@@ -30,9 +30,12 @@ def main() -> None:
     ap.add_argument("--features", default=None, help="features root for the fine-tuned model")
     ap.add_argument("--splits", nargs="+", default=["val_internal", "test"])
     ap.add_argument("--smoke", action="store_true")
+    ap.add_argument("--seed", type=int, default=None, help="override cfg seed (seed repeats)")
     args = ap.parse_args()
 
     cfg = load_yaml(args.config)
+    if args.seed is not None:
+        cfg["seed"] = args.seed
     spec = load_yaml(args.backbones)["backbones"][cfg["backbone"]]
     paths = PathsCfg.from_yaml(ROOT / "configs/paths.yaml", ROOT)
     processed = Path(args.processed) if args.processed else paths.processed_dir
