@@ -57,6 +57,23 @@ def hbar(labels: Sequence[str], values: Sequence[float], path: Path, title: str,
     return _save(fig, path)
 
 
+def hbar_err(labels: Sequence[str], means: Sequence[float], stds: Sequence[float], path: Path, title: str, xlabel: str = "",
+             color: str = SERIES[0], fmt: str = "{:.3f}") -> Path:
+    """Single-series horizontal bars with ± error whiskers and 'mean ± std' labels."""
+    fig, ax = plt.subplots(figsize=(7, 0.5 * len(labels) + 1.2))
+    y = list(range(len(labels)))[::-1]
+    ax.barh(y, means, xerr=stds, color=color, height=0.55, error_kw=dict(ecolor=INK2, capsize=4, elinewidth=1.2))
+    ax.set_yticks(y, labels)
+    vmax = max(m + s for m, s in zip(means, stds))
+    for yi, m, s in zip(y, means, stds):
+        ax.text(m + s + vmax * 0.01, yi, f"{fmt.format(m)} ± {fmt.format(s)}".replace(".", ","), va="center", fontsize=8.5, color=INK2)
+    ax.set_xlim(0, vmax * 1.2)
+    ax.set_title(title, loc="left", fontsize=11, color=INK, pad=10)
+    ax.set_xlabel(xlabel, color=INK2, fontsize=9)
+    _style(ax)
+    return _save(fig, path)
+
+
 def grouped_hbar(groups: Sequence[str], series: dict[str, Sequence[float]], path: Path, title: str,
                  fmt: str = "{:,.0f}") -> Path:
     """Few series x few groups; fixed hue order; legend always present."""

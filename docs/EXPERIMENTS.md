@@ -26,3 +26,10 @@ Her deney bitince `log-experiment` skill'i ile bir satır eklenir. Sayılar `out
 | 20261022_siglip_vitb16+arcface_arcface_test_s0 | 2026-10-22 | siglip_vitb16 | arcface | test | yerel 3060 | 0.567 | 0.804 | 0.529 | 0.666 | AUROC abs 0.700; doğru↔yanlış margin 0.822; kat.tut@5 0.788; dim 256 |
 | 20261023_siglip_vitb16+ft_ft_val_internal_s0 | 2026-10-23 | siglip_vitb16 | ft (son 4 blok) | val_internal | Colab L4 | 0.745 | 0.915 | 0.734 | 0.737 | AUROC abs 0.805; kat.tut@5 0.843; dim 256 |
 | 20261023_siglip_vitb16+ft_ft_test_s0 | 2026-10-23 | siglip_vitb16 | ft (son 4 blok) | test | Colab L4 | 0.633 | 0.855 | 0.628 | 0.678 | AUROC abs 0.714; kat.tut@5 0.845; dim 256 |
+| 20261024_siglip_vitb16+head_s1_head_s1_val_internal_s1 | 2026-10-24 | siglip_vitb16 | head (tohum 1) | val_internal | yerel 3060 | 0.647 | 0.869 | 0.628 | 0.699 | AUROC abs 0.732; tohum tekrarı |
+| 20261024_siglip_vitb16+head_s1_head_s1_test_s1 | 2026-10-24 | siglip_vitb16 | head (tohum 1) | test | yerel 3060 | 0.546 | 0.798 | 0.529 | 0.635 | AUROC abs 0.644; tohum tekrarı |
+| 20261024_siglip_vitb16+head_s2_head_s2_val_internal_s2 | 2026-10-24 | siglip_vitb16 | head (tohum 2) | val_internal | yerel 3060 | 0.645 | 0.865 | 0.627 | 0.689 | AUROC abs 0.768; tohum tekrarı |
+| 20261024_siglip_vitb16+head_s2_head_s2_test_s2 | 2026-10-24 | siglip_vitb16 | head (tohum 2) | test | yerel 3060 | 0.545 | 0.797 | 0.530 | 0.638 | AUROC abs 0.665; tohum tekrarı |
+
+## Tohum özeti (test, reports/tables/seed_summary_test.csv)
+- başlık (InfoNCE), 3 tohum: R@1 0,550 ± 0,008, mAP 0,534 ± 0,007; fine-tune (1 tohum) 0,633 → fark > 10 σ. ft tohum 1–2 Colab'da bekleniyor.

@@ -1,5 +1,5 @@
 # Durum
-_Son güncelleme: 2026-10-23 (cc)_
+_Son güncelleme: 2026-10-24 (cc)_
 
 ## Hazır
 - Depo yapısı, mimari, değerlendirme protokolü, skill'ler
@@ -37,7 +37,9 @@ _Son güncelleme: 2026-10-23 (cc)_
 
 ## Sıradaki
 1. ~~history.json~~ (indirildi, Rapor 5 güncellendi)
-2. Tohum tekrarı (başlık 3 tohum, ucuz); IEEE rapor taslağı (LaTeX, Tablo 1–2, şekiller); sunum
+2. ~~Başlık tohum tekrarı~~ yapıldı: 3 tohum R@1 0,550 ± 0,008 (`scripts/seed_summary.py` → `reports/tables/seed_summary_test.csv`, `reports/figures/seed_summary_r1_test.png`)
+3. Fine-tune tohum 1–2: Colab `colab_finetune.ipynb` (SEEDS=[1,2]) çalışıyor → `data/features/siglip_vitb16+ft_s{1,2}/` + `outputs/checkpoints/ft_s{1,2}/history.json` indirilince `evaluate.py --variant ft_s1 --seed 1` (val_internal, test), `seed_summary.py`, Rapor 5 güncelle
+4. IEEE rapor taslağı — kullanıcı önce raporları anlamak istiyor, bekliyor
 2. Nihai rapor hazırlığı: tohum tekrarı (3 tohum, başlık), Tablo 1–2 LaTeX, IEEE taslak; sunum
 
 ## Bekleyen

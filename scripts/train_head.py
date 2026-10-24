@@ -33,9 +33,12 @@ def main() -> None:
     ap.add_argument("--variant", default="head")
     ap.add_argument("--resume", action="store_true")
     ap.add_argument("--splits", nargs="+", default=["val_internal", "test"])
+    ap.add_argument("--seed", type=int, default=None, help="override cfg seed (seed repeats)")
     args = ap.parse_args()
 
     cfg = load_yaml(args.config)
+    if args.seed is not None:
+        cfg["seed"] = args.seed
     paths = PathsCfg.from_yaml(ROOT / "configs/paths.yaml", ROOT)
     set_seed(cfg["seed"])
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
